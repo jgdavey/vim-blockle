@@ -21,6 +21,8 @@ function! s:ToggleDoEndOrBrackets()
         let end_of_line = 'e'
       endif
       exe "normal! `ehi\<cr>\<esc>me`d".end_of_line."a\<cr>\<esc>"
+      normal `d
+      silent! :'d,'ds/do|/do |/
       :'d,'eTrim
       normal `d
     endif
@@ -30,12 +32,18 @@ function! s:ToggleDoEndOrBrackets()
       if w=='end'
         normal %
       endif
-      normal mr%ciw}
-      normal `rciw{
+      let begin_num = line('.')
+      normal md%
+      let end_num = line('.')
+      normal ciw}
+      normal `dciw{
+      if (end_num-begin_num) == 2
+        normal JJ`d
+      endif
     else
       throw 'Cannot toggle block: cursor is not on {, }, do or end'
     endif
   endif
 endfunction
 
-nnoremap <buffer> <leader>b :call <sid>ToggleDoEndOrBrackets()<cr>
+nnoremap <leader>b :call <sid>ToggleDoEndOrBrackets()<CR>
