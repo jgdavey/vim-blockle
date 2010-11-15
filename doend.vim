@@ -1,18 +1,18 @@
 function! s:ToggleDoEndOrBrackets()
-  let c = getline('.')[col('.')-1]
-  if c =~ '[{}]'
-    if c=='}'
-      normal %
+  let char = getline('.')[col('.')-1]
+  if char =~ '[{}]'
+    if char=='}'
+      norm! %
     endif
-    normal md
+    norm! md
     let begin_num = line('.')
     let begin_line = getline('.')
-    normal %
+    norm! %
     let end_num = line('.')
 
-    normal send
-    normal me`dsdo
-    normal ='e`d
+    norm! send
+    norm! me`dsdo
+    norm! ='e`d
 
     if begin_num == end_num " Was a one-liner
       if begin_line =~ '\v\|.*\|'
@@ -20,25 +20,25 @@ function! s:ToggleDoEndOrBrackets()
       else
         let end_of_line = 'e'
       endif
-      exe "normal! `ehi\<cr>\<esc>me`d".end_of_line."a\<cr>\<esc>"
-      normal `d
-      silent! :'d,'ds/do|/do |/
+      exe "norm! `ehi\<cr>\<esc>me`d".end_of_line."a\<cr>\<esc>"
+      norm! `d
+      if search('do|', 'n', begin_num) | :'d,'ds/do|/do |/ | endif
       :'d,'eTrim
-      normal `d
+      norm! `d
     endif
   else
     let w = expand('<cword>')
     if w =~ 'do\|end'
       if w=='end'
-        normal %
+        norm! %
       endif
       let begin_num = line('.')
-      normal md%
+      norm! md%
       let end_num = line('.')
-      normal ciw}
-      normal `dciw{
+      norm! ciw}
+      norm! `dciw{
       if (end_num-begin_num) == 2
-        normal JJ`d
+        norm! JJ`d
       endif
     else
       throw 'Cannot toggle block: cursor is not on {, }, do or end'
