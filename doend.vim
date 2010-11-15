@@ -2,16 +2,16 @@ function! s:ToggleDoEndOrBrackets()
   let char = getline('.')[col('.')-1]
   if char =~ '[{}]'
     if char=='}'
-      norm! %
+      norm %
     endif
-    norm! md
+    norm md
     let begin_num = line('.')
     let begin_line = getline('.')
-    norm! %
+    norm %
     let end_num = line('.')
 
     norm! send
-    norm! me`dsdo
+    norm me`dsdo
     norm! ='e`d
 
     if begin_num == end_num " Was a one-liner
@@ -21,19 +21,19 @@ function! s:ToggleDoEndOrBrackets()
         let end_of_line = 'e'
       endif
       exe "norm! `ehi\<cr>\<esc>me`d".end_of_line."a\<cr>\<esc>"
-      norm! `d
-      if search('do|', 'n', begin_num) | :'d,'ds/do|/do |/ | endif
+      norm `d
+      if search('do|', 'c', begin_num) | :.s/do|/do |/ | endif
       :'d,'eTrim
-      norm! `d
+      norm `d
     endif
   else
     let w = expand('<cword>')
     if w =~ 'do\|end'
       if w=='end'
-        norm! %
+        norm %
       endif
       let begin_num = line('.')
-      norm! md%
+      norm lbmd%
       let end_num = line('.')
       norm! ciw}
       norm! `dciw{
