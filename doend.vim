@@ -4,7 +4,12 @@ function! s:ToggleDoEndOrBrackets()
     if char=='}'
       norm %
     endif
-    norm md
+    norm h
+    " Bracket touching previous word
+    if getline('.')[col('.')-1] =~ '[^ ;]'
+      exe "norm! a "
+    endif
+    norm lmd
     let begin_num = line('.')
     let begin_line = getline('.')
     norm %
@@ -15,7 +20,7 @@ function! s:ToggleDoEndOrBrackets()
     norm! ='e`d
 
     if begin_num == end_num " Was a one-liner
-      if begin_line =~ '\v\|.*\|'
+      if search('do \*|', 'c', begin_num)
         let end_of_line = '2f|'
       else
         let end_of_line = 'e'
@@ -39,6 +44,10 @@ function! s:ToggleDoEndOrBrackets()
       norm! `dciw{
       if (end_num-begin_num) == 2
         norm! JJ`d
+        " Remove extraneous spaces
+        if search('  \+', 'c', begin_num) | :.s/\([^ ]\)  \+/\1 /g | endif
+        if search('{ |', 'c', begin_num) | :.s/{ |/{|/ | endif
+        normal `d
       endif
     else
       throw 'Cannot toggle block: cursor is not on {, }, do or end'
