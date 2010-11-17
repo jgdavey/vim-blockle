@@ -20,7 +20,8 @@ function! s:ToggleDoEndOrBrackets()
     norm! ='e`d
 
     if begin_num == end_num " Was a one-liner
-      if search('do \*|', 'c', begin_num)
+      " Has block parameters
+      if search('do *|', 'c', begin_num)
         let end_of_line = '2f|'
       else
         let end_of_line = 'e'
