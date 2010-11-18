@@ -37,9 +37,11 @@ function! s:ToggleDoEndOrBrackets()
     if w =~ 'do\|end'
       if w=='end'
         norm %
+      elseif char == 'o'
+        norm! h
       endif
       let begin_num = line('.')
-      norm lbmd%
+      norm md%
       let end_num = line('.')
       norm! ciw}
       norm! `dciw{
