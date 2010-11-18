@@ -21,7 +21,7 @@ function! s:ToggleDoEndOrBrackets()
 
     if begin_num == end_num " Was a one-liner
       " Has block parameters
-      if search('do *|', 'c', begin_num)
+      if search('\vdo *\|', 'c', begin_num)
         let end_of_line = '2f|'
       else
         let end_of_line = 'e'
@@ -34,7 +34,7 @@ function! s:ToggleDoEndOrBrackets()
     endif
   else
     let w = expand('<cword>')
-    if w =~ 'do\|end'
+    if w =~ '\vdo|end'
       if w=='end'
         norm %
       elseif char == 'o'
