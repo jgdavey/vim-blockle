@@ -1,3 +1,10 @@
+" blockle.vim - Ruby Block Toggling
+" Author:       Joshua Davey <josh@joshuadavey.com>
+" Version:      0.1
+"
+" Licensed under the same terms as Vim itself.
+" ============================================================================
+
 function! s:ToggleDoEndOrBrackets()
   let char = getline('.')[col('.')-1]
   if char =~ '[{}]'
