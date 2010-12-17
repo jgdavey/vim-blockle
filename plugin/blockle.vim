@@ -77,3 +77,7 @@ function! s:ToggleDoEndOrBrackets()
 endfunction
 
 nnoremap <leader>b :call <sid>ToggleDoEndOrBrackets()<CR>
+
+let &cpo = s:cpo_save
+
+" vim:set ft=vim ff=unix ts=8 sw=4 sts=4:
