@@ -27,15 +27,23 @@ function! s:ToggleDoEndOrBrackets()
     if getline('.')[col('.')-1] =~ '[^ ;]'
       exe "norm! a "
     endif
-    norm lmd
+    norm l
+    let begin_pos = getpos('.')
     let begin_num = line('.')
     let begin_line = getline('.')
     norm %
+    let end_pos = getpos('.')
     let end_num = line('.')
 
+    call setpos('.', begin_pos)
+    norm! sdo
+    call setpos('.', end_pos)
+    if getline('.')[col('.')-1] != 'e'
+      norm! l
+    endif
     norm! send
-    norm me`dsdo
-    norm! ='e`d
+    call setpos('.', begin_pos)
+    " Still need to fix indentation
 
     if begin_num == end_num " Was a one-liner
       " Has block parameters
@@ -44,11 +52,15 @@ function! s:ToggleDoEndOrBrackets()
       else
         let end_of_line = 'e'
       endif
-      exe "norm! `ehi\<cr>\<esc>me`d".end_of_line."a\<cr>\<esc>"
-      norm `d
+      call setpos('.', end_pos)
+      exe "norm! i\<cr>"
+      let end_pos = getpos('.')
+      call setpos('.', begin_pos)
+      exe "norm! ".end_of_line."a\<cr>"
+      call setpos('.', begin_pos)
       if search('do|', 'c', begin_num) | :.s/do|/do |/ | endif
-      :'d,'eTrim
-      norm `d
+      exe begin_num.','.end_num.'Trim'
+      call setpos('.', begin_pos)
     endif
   else
     let w = expand('<cword>')
@@ -58,17 +70,22 @@ function! s:ToggleDoEndOrBrackets()
       elseif char == 'o'
         norm! h
       endif
+      let do_pos = getpos('.')
       let begin_num = line('.')
-      norm md%
+      norm %
+      let end_pos = getpos('.')
       let end_num = line('.')
-      norm! ciw}
-      norm! `dciw{
+
+      norm ciw}
+      call setpos('.', do_pos)
+      norm ciw{
+
       if (end_num-begin_num) == 2
-        norm! JJ`d
+        norm! JJ
         " Remove extraneous spaces
         if search('  \+', 'c', begin_num) | :.s/\([^ ]\)  \+/\1 /g | endif
         if search('{ |', 'c', begin_num) | :.s/{ |/{|/ | endif
-        normal `d
+        call setpos('.', do_pos)
       endif
     else
       throw 'Cannot toggle block: cursor is not on {, }, do or end'
