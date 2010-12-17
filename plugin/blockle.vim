@@ -101,9 +101,13 @@ function! s:ToggleDoEndOrBrackets()
       throw 'Cannot toggle block: cursor is not on {, }, do or end'
     endif
   endif
+  silent! call repeat#set("\<Plug>BlockToggle", -1)
 endfunction
 
-nnoremap <leader>b :call <sid>ToggleDoEndOrBrackets()<CR>
+nnoremap <silent> <Plug>BlockToggle :<C-U>call <SID>ToggleDoEndOrBrackets()<CR>
+
+map <leader>b <Plug>BlockToggle
+
 
 let &cpo = s:cpo_save
 
