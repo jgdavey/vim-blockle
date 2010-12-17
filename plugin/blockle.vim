@@ -107,4 +107,4 @@ nnoremap <leader>b :call <sid>ToggleDoEndOrBrackets()<CR>
 
 let &cpo = s:cpo_save
 
-" vim:set ft=vim ff=unix ts=8 sw=4 sts=4:
+" vim:set ft=vim ff=unix ts=4 sw=2 sts=2:
