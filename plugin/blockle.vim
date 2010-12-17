@@ -5,6 +5,17 @@
 " Licensed under the same terms as Vim itself.
 " ============================================================================
 
+" Exit quickly when:
+" - this plugin was already loaded (or disabled)
+" - when 'compatible' is set
+if (exists("g:loaded_blockle") && g:loaded_blockle) || &cp
+    finish
+endif
+let g:loaded_blockle = 1
+
+let s:cpo_save = &cpo
+set cpo&vim
+
 function! s:ToggleDoEndOrBrackets()
   let char = getline('.')[col('.')-1]
   if char =~ '[{}]'
