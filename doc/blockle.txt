@@ -21,13 +21,13 @@ move to a one-liner if appropriate:
 
 For example, if have the following ruby code (* indicates cursor position):
 >
-  ['one', 'two'].each d*o |number\
+  ['one', 'two'].each d*o |number|
     puts number + "!"
   end
-
+>
 After invoking <Leader>b, the resulting code would be:
 >
-  ['one', 'two'].each *{ |number\ puts number + "!" }
+  ['one', 'two'].each *{ |number| puts number + "!" }
 >
 
 MAPPINGS                                               *blockle-mappings*
