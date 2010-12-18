@@ -1,0 +1,41 @@
+*blockle.txt*  Plugin for toggling ruby block styles
+
+Author:  Joshua Davey <josh@joshuadavey.com>          *blockle-author*
+License: Same terms as Vim itself (see |license|)
+
+This plugin is only available if 'compatible' is not set, and will only work
+correctly if matchit.vim is available.
+
+INTRODUCTION                                          *blockle*
+
+This plugin allows rapid toggling between the two different styles of ruby
+blocks, namely do/end and brackets {}. To use, simply move the cursor to the
+beginning or end of a block, and type <Leader>b. As a mnemonic, remember 'b'
+for 'block'.
+
+Note: You must have your cursor on the do, end, {, or } for the plugin to work
+correctly.
+
+When moving from a do/end to a bracket-style block, the plugin with attempt to
+move to a one-liner if appropriate:
+
+For example, if have the following ruby code (* indicates cursor position):
+>
+  ['one', 'two'].each d*o |number\
+    puts number + "!"
+  end
+
+After invoking <Leader>b, the resulting code would be:
+>
+  ['one', 'two'].each *{ |number\ puts number + "!" }
+>
+
+MAPPINGS                                               *blockle-mappings*
+
+<Leader>b   or   <Plug>BlockToggle
+  Toggle ruby block style
+
+                                                       *blockle-settings*
+This plugin has no settings.
+
+ vim:tw=78:et:ft=help:norl:
