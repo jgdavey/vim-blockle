@@ -91,6 +91,7 @@ function! s:ConvertDoEndToBrackets()
 endfunction
 
 function! s:ToggleDoEndOrBrackets()
+  if &ft!='ruby' | return | endif
   let char = getline('.')[col('.')-1]
   if char =~ '[{}]'
     call <SID>ConvertBracketsToDoEnd()
