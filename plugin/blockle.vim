@@ -89,18 +89,39 @@ function! s:ConvertDoEndToBrackets()
   endif
 endfunction
 
-function! s:ToggleDoEndOrBrackets()
-  if &ft!='ruby' | return | endif
+function! s:goToNearestBlockBounds()
   let char = getline('.')[col('.')-1]
   if char =~ '[{}]'
-    call <SID>ConvertBracketsToDoEnd()
-  else
-    if expand('<cword>') =~ '\vdo|end'
-      call <SID>ConvertDoEndToBrackets()
-    else
-      throw 'Cannot toggle block: cursor is not on {, }, do or end'
-    endif
+    return char
   endif
+
+  let word = expand('<cword>')
+  if word =~ '\vdo|end'
+    return word
+  endif
+
+  let endline = line('.')+5
+  echo endline
+  if search('\vend|}', 'cs', endline)
+    return expand('<cword>')
+  endif
+
+  return ''
+endfunction
+
+function! s:ToggleDoEndOrBrackets()
+  if &ft!='ruby' | return | endif
+
+  let block_bound = s:goToNearestBlockBounds()
+
+  if block_bound =~ '[{}]'
+    call <SID>ConvertBracketsToDoEnd()
+  elseif block_bound =~ '\vdo|end'
+    call <SID>ConvertDoEndToBrackets()
+  else
+    throw 'Cannot toggle block: cursor is not on {, }, do or end'
+  endif
+
   silent! call repeat#set("\<Plug>BlockToggle", -1)
 endfunction
 
