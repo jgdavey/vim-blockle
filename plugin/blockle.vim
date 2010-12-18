@@ -85,7 +85,6 @@ function! s:ConvertDoEndToBrackets()
     norm! JJ
     " Remove extraneous spaces
     if search('  \+', 'c', begin_num) | :.s/\([^ ]\)  \+/\1 /g | endif
-    if search('{ |', 'c', begin_num) | :.s/{ |/{|/ | endif
     call setpos('.', do_pos)
   endif
 endfunction
