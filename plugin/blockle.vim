@@ -9,7 +9,7 @@
 " - this plugin was already loaded (or disabled)
 " - when 'compatible' is set
 if (exists("g:loaded_blockle") && g:loaded_blockle) || &cp
-    finish
+  finish
 endif
 let g:loaded_blockle = 1
 
