@@ -74,7 +74,6 @@ function! s:ConvertDoEndToBrackets()
   let do_pos = getpos('.')
   let begin_num = line('.')
   norm %
-  let end_pos = getpos('.')
   let end_num = line('.')
 
   norm ciw}
@@ -84,7 +83,7 @@ function! s:ConvertDoEndToBrackets()
   if (end_num-begin_num) == 2
     norm! JJ
     " Remove extraneous spaces
-    if search('  \+', 'c', begin_num) | :.s/\([^ ]\)  \+/\1 /g | endif
+    " if search('  \+', 'c', begin_num) | :.s/\([^ ]\)  \+/\1 /g | endif
     call setpos('.', do_pos)
   endif
 endfunction
@@ -101,7 +100,6 @@ function! s:goToNearestBlockBounds()
   endif
 
   let endline = line('.')+5
-  echo endline
   if search('\vend|}', 'cs', endline)
     return expand('<cword>')
   endif
