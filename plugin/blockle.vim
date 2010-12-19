@@ -58,7 +58,6 @@ function! s:ConvertBracketsToDoEnd()
     exe "norm! ".end_of_line."a\<cr>"
     call setpos('.', begin_pos)
     if search('do|', 'c', begin_num) | :.s/do|/do |/ | endif
-    exe begin_num.','.end_num.'Trim'
     call setpos('.', begin_pos)
   endif
 endfunction
