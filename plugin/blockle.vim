@@ -53,7 +53,6 @@ function! s:ConvertBracketsToDoEnd()
     endif
     call setpos('.', end_pos)
     exe "norm! i\<cr>"
-    let end_pos = getpos('.')
     call setpos('.', begin_pos)
     exe "norm! ".end_of_line."a\<cr>"
     call setpos('.', begin_pos)
