@@ -80,13 +80,13 @@ function! s:ConvertDoEndToBrackets()
   let do_pos = getpos('.')
   let begin_num = line('.')
   norm %
-  let end_num = line('.')
+  let lines = (line('.')-begin_num+1)
 
   norm ciw}
   call setpos('.', do_pos)
   norm ciw{
 
-  if (end_num-begin_num) == 2
+  if lines == 3
     norm! JJ
     " Remove extraneous spaces
     " if search('  \+', 'c', begin_num) | :.s/\([^ ]\)  \+/\1 /g | endif
