@@ -37,14 +37,17 @@ function! s:ConvertBracketsToDoEnd()
   call setpos('.', begin_pos)
   norm! sdo
   call setpos('.', end_pos)
-  if getline('.')[col('.')-1] != 'e'
-    norm! l
-  endif
-  norm! send
-  call setpos('.', begin_pos)
-  " Still need to fix indentation
 
   if begin_num == end_num " Was a one-liner
+    if getline('.')[col('.')-1] == ' '
+      norm! x
+    else
+      norm! l
+      let end_pos = getpos('.')
+    endif
+    norm! send
+    call setpos('.', begin_pos)
+
     " Has block parameters
     if search('\vdo *\|', 'c', begin_num)
       let end_of_line = '2f|'
@@ -60,6 +63,9 @@ function! s:ConvertBracketsToDoEnd()
       :.s/do|/do |/
       call setpos('.', begin_pos)
     endif
+  else
+    norm! send
+    call setpos('.', begin_pos)
   endif
 endfunction
 
