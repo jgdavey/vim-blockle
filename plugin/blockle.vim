@@ -123,7 +123,7 @@ function! s:ToggleDoEndOrBrackets()
   elseif block_bound ==# 'do' || block_bound ==# 'end'
     call <SID>ConvertDoEndToBrackets()
   else
-    throw 'Cannot toggle block: cursor is not on {, }, do or end'
+    echo 'Cannot toggle block: cursor is not on {, }, do or end'
   endif
 
   silent! call repeat#set("\<Plug>BlockToggle", -1)
