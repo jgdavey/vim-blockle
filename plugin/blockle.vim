@@ -100,7 +100,7 @@ function! s:goToNearestBlockBounds()
     return char
   endif
   let word = expand('<cword>')
-  if word == 'do' || word == 'end'
+  if (word == 'do' || word == 'end') && char != ' '
     return word
   elseif searchpair('{', '', '}', 'bcW') > 0
     return getline('.')[col('.')-1]
