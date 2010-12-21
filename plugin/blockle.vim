@@ -114,9 +114,9 @@ function! s:ToggleDoEndOrBrackets()
   let block_bound = s:goToNearestBlockBounds()
 
   if block_bound =='{' || block_bound == '}'
-    call <SID>ConvertBracketsToDoEnd()
+    call s:ConvertBracketsToDoEnd()
   elseif block_bound ==# 'do' || block_bound ==# 'end'
-    call <SID>ConvertDoEndToBrackets()
+    call s:ConvertDoEndToBrackets()
   else
     echo 'Cannot toggle block: cursor is not on {, }, do or end'
   endif
