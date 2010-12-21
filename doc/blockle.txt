@@ -35,6 +35,13 @@ MAPPINGS                                               *blockle-mappings*
 <Leader>b   or   <Plug>BlockToggle
   Toggle ruby block style
 
+To add your own mapping, add something like the following to your vim configuration:
+>
+  map <D-j> <Plug>BlockToggle
+<
+which would map Super-J (Cmd-J on Mac OS) to the toggling function.
+
+
                                                        *blockle-settings*
 This plugin has no settings.
 
