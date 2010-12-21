@@ -109,8 +109,6 @@ function! s:goToNearestBlockBounds()
 endfunction
 
 function! s:ToggleDoEndOrBrackets()
-  if &ft!='ruby' | return | endif
-
   let block_bound = s:goToNearestBlockBounds()
 
   if block_bound =='{' || block_bound == '}'
@@ -126,8 +124,10 @@ endfunction
 
 nnoremap <silent> <Plug>BlockToggle :<C-U>call <SID>ToggleDoEndOrBrackets()<CR>
 
-map <leader>b <Plug>BlockToggle
-
+augroup blockle
+  autocmd!
+  autocmd FileType ruby map <buffer> <leader>b <Plug>BlockToggle
+augroup END
 
 let &cpo = s:cpo_save
 
