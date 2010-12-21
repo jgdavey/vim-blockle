@@ -95,12 +95,16 @@ function! s:ConvertDoEndToBrackets()
 endfunction
 
 function! s:goToNearestBlockBounds()
+  let char = getline('.')[col('.')-1]
+  if char == '{' || char == '}'
+    return char
+  endif
   let word = expand('<cword>')
   if word == 'do' || word == 'end'
     return word
-  elseif searchpair('{', '', '}\zs', 'bcW') > 0
+  elseif searchpair('{', '', '}', 'bcW') > 0
     return getline('.')[col('.')-1]
-  elseif searchpair('\<do\>\zs', '', '\<end\>\zs', 'bcW',
+  elseif searchpair('\<do\>', '', '\<end\>\zs', 'bcW',
         \ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string"') > 0
     return expand('<cword>')
   endif
