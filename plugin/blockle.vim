@@ -17,6 +17,8 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 function! s:ConvertBracketsToDoEnd()
+  let reg = getreg('"', 1)
+  let regtype = getregtype('"')
   let char = getline('.')[col('.')-1]
   if char=='}'
     norm %
@@ -67,9 +69,12 @@ function! s:ConvertBracketsToDoEnd()
     norm! send
     call setpos('.', begin_pos)
   endif
+  call setreg('"', reg, regtype)
 endfunction
 
 function! s:ConvertDoEndToBrackets()
+  let reg = getreg('"', 1)
+  let regtype = getregtype('"')
   let char = getline('.')[col('.')-1]
   let w = expand('<cword>')
   if w=='end'
@@ -92,6 +97,7 @@ function! s:ConvertDoEndToBrackets()
     " if search('  \+', 'c', begin_num) | :.s/\([^ ]\)  \+/\1 /g | endif
     call setpos('.', do_pos)
   endif
+  call setreg('"', reg, regtype)
 endfunction
 
 function! s:goToNearestBlockBounds()
