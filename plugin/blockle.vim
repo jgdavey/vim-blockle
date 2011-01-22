@@ -17,10 +17,6 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 function! s:ConvertBracketsToDoEnd()
-  let reg = getreg('"', 1)
-  let regtype = getregtype('"')
-  let cb_save = &clipboard
-  set clipboard-=unnamed
   let char = getline('.')[col('.')-1]
   if char=='}'
     norm %
@@ -71,15 +67,9 @@ function! s:ConvertBracketsToDoEnd()
     norm! send
     call setpos('.', begin_pos)
   endif
-  call setreg('"', reg, regtype)
-  let &clipboard = cb_save
 endfunction
 
 function! s:ConvertDoEndToBrackets()
-  let reg = getreg('"', 1)
-  let regtype = getregtype('"')
-  let cb_save = &clipboard
-  set clipboard-=unnamed
   let char = getline('.')[col('.')-1]
   let w = expand('<cword>')
   if w=='end'
@@ -102,8 +92,6 @@ function! s:ConvertDoEndToBrackets()
     " if search('  \+', 'c', begin_num) | :.s/\([^ ]\)  \+/\1 /g | endif
     call setpos('.', do_pos)
   endif
-  call setreg('"', reg, regtype)
-  let &clipboard = cb_save
 endfunction
 
 function! s:goToNearestBlockBounds()
@@ -125,8 +113,13 @@ function! s:goToNearestBlockBounds()
 endfunction
 
 function! s:ToggleDoEndOrBrackets()
-  let block_bound = s:goToNearestBlockBounds()
+  " Save anonymous register and clipboard settings
+  let reg = getreg('"', 1)
+  let regtype = getregtype('"')
+  let cb_save = &clipboard
+  set clipboard-=unnamed
 
+  let block_bound = s:goToNearestBlockBounds()
   if block_bound =='{' || block_bound == '}'
     call s:ConvertBracketsToDoEnd()
   elseif block_bound ==# 'do' || block_bound ==# 'end'
@@ -134,6 +127,10 @@ function! s:ToggleDoEndOrBrackets()
   else
     echo 'Cannot toggle block: cursor is not on {, }, do or end'
   endif
+
+  " Restore anonymous register and clipboard settings
+  call setreg('"', reg, regtype)
+  let &clipboard = cb_save
 
   silent! call repeat#set("\<Plug>BlockToggle", -1)
 endfunction
