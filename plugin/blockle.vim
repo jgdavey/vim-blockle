@@ -1,6 +1,6 @@
 " blockle.vim - Ruby Block Toggling
 " Author:       Joshua Davey <josh@joshuadavey.com>
-" Version:      0.3
+" Version:      0.4
 "
 " Licensed under the same terms as Vim itself.
 " ============================================================================
