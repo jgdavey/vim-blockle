@@ -19,6 +19,8 @@ set cpo&vim
 function! s:ConvertBracketsToDoEnd()
   let reg = getreg('"', 1)
   let regtype = getregtype('"')
+  let cb_save = &clipboard
+  set clipboard-=unnamed
   let char = getline('.')[col('.')-1]
   if char=='}'
     norm %
@@ -70,11 +72,14 @@ function! s:ConvertBracketsToDoEnd()
     call setpos('.', begin_pos)
   endif
   call setreg('"', reg, regtype)
+  let &clipboard = cb_save
 endfunction
 
 function! s:ConvertDoEndToBrackets()
   let reg = getreg('"', 1)
   let regtype = getregtype('"')
+  let cb_save = &clipboard
+  set clipboard-=unnamed
   let char = getline('.')[col('.')-1]
   let w = expand('<cword>')
   if w=='end'
@@ -98,6 +103,7 @@ function! s:ConvertDoEndToBrackets()
     call setpos('.', do_pos)
   endif
   call setreg('"', reg, regtype)
+  let &clipboard = cb_save
 endfunction
 
 function! s:goToNearestBlockBounds()
