@@ -137,10 +137,12 @@ endfunction
 
 nnoremap <silent> <Plug>BlockToggle :<C-U>call <SID>ToggleDoEndOrBrackets()<CR>
 
-augroup blockle
-  autocmd!
-  autocmd FileType ruby map <buffer> <leader>b <Plug>BlockToggle
-augroup END
+if (!exists("g:blockle_skip_mappings") || !g:blockle_skip_mappings)
+  augroup blockle
+    autocmd!
+    autocmd FileType ruby map <buffer> <leader>b <Plug>BlockToggle
+  augroup END
+endif
 
 let &cpo = s:cpo_save
 

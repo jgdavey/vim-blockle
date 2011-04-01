@@ -43,6 +43,10 @@ which would map Super-J (Cmd-J on Mac OS) to the toggling function.
 
 
                                                        *blockle-settings*
-This plugin has no settings.
+
+To skip default mapping (<Leader>b for ruby filetype) put following in .vimrc:
+>
+  let g:blockle_skip_mappings = 1
+<
 
  vim:tw=78:et:ft=help:norl:
