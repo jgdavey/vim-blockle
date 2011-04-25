@@ -137,9 +137,13 @@ endfunction
 
 nnoremap <silent> <Plug>BlockToggle :<C-U>call <SID>ToggleDoEndOrBrackets()<CR>
 
+if !exists("g:blockle_mapping")
+  let g:blockle_mapping = '<Leader>b'
+endif
+
 augroup blockle
   autocmd!
-  autocmd FileType ruby map <buffer> <leader>b <Plug>BlockToggle
+  exec 'autocmd FileType ruby map <buffer> ' . g:blockle_mapping . ' <Plug>BlockToggle'
 augroup END
 
 let &cpo = s:cpo_save
