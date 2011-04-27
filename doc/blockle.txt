@@ -13,8 +13,9 @@ blocks, namely do/end and brackets {}. To use, simply move the cursor to the
 beginning or end of a block, and type <Leader>b. As a mnemonic, remember 'b'
 for 'block'.
 
-Note: You must have your cursor on the do, end, {, or } for the plugin to work
-correctly.
+Note: This plugin works best if you have your cursor on a do, end, {, or }. An
+attempt is made for it to work if you are inside a block as well, in which
+case the most immediate parent will be toggled.
 
 When moving from a do/end to a bracket-style block, the plugin with attempt to
 move to a one-liner if appropriate:
@@ -35,11 +36,13 @@ MAPPINGS                                               *blockle-mappings*
 <Leader>b   or   <Plug>BlockToggle
   Toggle ruby block style
 
-To override default mapping, add something like the following to your vim configuration:
+To override default mapping, add something like the following to your vim
+configuration:
 >
   let g:blockle_mapping = '<Leader>bl'
 <
-To add additional mapping, add something like the following to your vim configuration:
+You can add additional mappings by calling the plugins function directly. To
+do so, add something like the following to your vim configuration:
 >
   map <D-j> <Plug>BlockToggle
 <
