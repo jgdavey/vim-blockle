@@ -45,7 +45,9 @@ function! s:ConvertBracketsToDoEnd()
       norm! l
       let end_pos = getpos('.')
     endif
+    set paste
     norm! send
+    set nopaste
     call setpos('.', begin_pos)
 
     " Has block parameters
@@ -118,6 +120,7 @@ function! s:ToggleDoEndOrBrackets()
   let regtype = getregtype('"')
   let cb_save = &clipboard
   set clipboard-=unnamed
+  let paste_mode = &paste
 
   let block_bound = s:goToNearestBlockBounds()
   if block_bound =='{' || block_bound == '}'
@@ -131,6 +134,7 @@ function! s:ToggleDoEndOrBrackets()
   " Restore anonymous register and clipboard settings
   call setreg('"', reg, regtype)
   let &clipboard = cb_save
+  let &paste = paste_mode
 
   silent! call repeat#set("\<Plug>BlockToggle", -1)
 endfunction
