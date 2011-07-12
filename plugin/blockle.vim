@@ -84,9 +84,14 @@ function! s:ConvertDoEndToBrackets()
   norm %
   let lines = (line('.')-begin_num+1)
 
+
+  call s:TurnAutocloseOff()
+
   norm ciw}
   call setpos('.', do_pos)
   norm ciw{
+
+  call s:TurnAutocloseOn()
 
   if lines == 3
     norm! JJ
@@ -137,6 +142,18 @@ function! s:ToggleDoEndOrBrackets()
   let &paste = paste_mode
 
   silent! call repeat#set("\<Plug>BlockToggle", -1)
+endfunction
+
+function! s:TurnAutocloseOff()
+  if exists("b:delimitMate_enabled") && b:delimitMate_enabled
+    silent! DelimitMateSwitch
+  endif
+endfunction
+
+function! s:TurnAutocloseOn()
+  if exists("b:delimitMate_enabled") && !b:delimitMate_enabled
+    silent! DelimitMateSwitch
+  endif
 endfunction
 
 nnoremap <silent> <Plug>BlockToggle :<C-U>call <SID>ToggleDoEndOrBrackets()<CR>
