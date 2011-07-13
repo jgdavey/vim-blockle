@@ -86,7 +86,13 @@ function! s:ConvertDoEndToBrackets()
 
   norm ciw}
   call setpos('.', do_pos)
-  norm ciw{
+  norm dw
+  
+  let line = getline(begin_num)
+  let before_do_str = strpart(line, 0, do_pos[2])
+  let after_do_str  = strpart(line, do_pos[2] + 1)
+
+  call setline(begin_num, before_do_str . "{" . after_do_str)
 
   if lines == 3
     norm! JJ
