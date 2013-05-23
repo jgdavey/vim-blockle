@@ -17,10 +17,10 @@ Note: This plugin works best if you have your cursor on a do, end, {, or }. An
 attempt is made for it to work if you are inside a block as well, in which
 case the most immediate parent will be toggled.
 
-When moving from a do/end to a bracket-style block, the plugin with attempt to
+When moving from a do/end to a bracket-style block, the plugin will attempt to
 move to a one-liner if appropriate:
 
-For example, if have the following ruby code (* indicates cursor position):
+For example, if you have the following ruby code (* indicates cursor position):
 >
   ['one', 'two'].each d*o |number|
     puts number + "!"
