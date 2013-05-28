@@ -29,7 +29,7 @@ installing [pathogen.vim](https://github.com/tpope/vim-pathogen), and
 then simply copy and paste:
 
     cd ~/.vim/bundle
-    git clone git://github.com/dwaller/vim-blockle.git
+    git clone git://github.com/jgdavey/vim-blockle.git
 
 Once help tags have been generated, you can view the manual with
 `:help blockle`.
