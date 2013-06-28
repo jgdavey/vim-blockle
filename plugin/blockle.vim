@@ -82,6 +82,11 @@ function! s:ConvertDoEndToBrackets()
   let do_pos = getpos('.')
   let begin_num = line('.')
   norm %
+  let try_again = 10
+  while try_again && expand('<cword>') !=# 'end'
+    let try_again = try_again - 1
+    norm %
+  endwhile
   let lines = (line('.')-begin_num+1)
 
   norm ciw}
