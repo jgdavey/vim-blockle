@@ -1,15 +1,15 @@
 #  vim-blockle
 
 This plugin allows rapid toggling between the two different styles of ruby
-blocks, namely do/end and brackets {}. To use, simply move the cursor to the
-beginning or end of a block, and type <Leader>b. As a mnemonic, remember 'b'
+blocks, namely `do`/`end` and brackets `{}`. To use, simply move the cursor to the
+beginning or end of a block, and type `<Leader>b`. As a mnemonic, remember 'b'
 for 'block'.
 
-Note: This plugin works best if you have your cursor on a do, end, {, or }. An
+Note: This plugin works best if you have your cursor on a `do`, `end`, `{`, or `}`. An
 attempt is made for it to work if you are inside a block as well, in which
 case the most immediate parent will be toggled.
 
-When moving from a do/end to a bracket-style block, the plugin will attempt to
+When moving from a `do`/`end` to a bracket-style block, the plugin will attempt to
 move to a one-liner if appropriate.
 
 For example, if you have the following ruby code (* indicates cursor position):
@@ -18,7 +18,7 @@ For example, if you have the following ruby code (* indicates cursor position):
       puts number + "!"
     end
 
-After invoking <Leader>b, the resulting code would be:
+After invoking `<Leader>b`, the resulting code would be:
 
     ['one', 'two'].each *{ |number| puts number + "!" }
 
