@@ -24,14 +24,21 @@ function! s:WordUnderCursor()
   return expand('<cword>')
 endfunction
 
+function! s:CharUnderCursorEquals(char)
+  return s:CharUnderCursor() ==# a:char
+endfunction
+
+function! s:CharUnderCursorMatches(pattern)
+  return s:CharUnderCursor() =~# a:pattern
+endfunction
+
 function! s:ConvertBracketsToDoEnd()
-  let char = s:CharUnderCursor()
-  if char ==# '}'
+  if s:CharUnderCursorEquals('}')
     normal! %
   endif
   normal! h
   " Bracket touching previous word
-  if s:CharUnderCursor() =~# '[^ ;]'
+  if s:CharUnderCursorMatches('[^ ;]')
     exe 'normal! a '
   endif
   normal! l
@@ -46,7 +53,7 @@ function! s:ConvertBracketsToDoEnd()
   call setpos('.', end_pos)
 
   if begin_num == end_num " Was a one-liner
-    if s:CharUnderCursor() ==# ' '
+    if s:CharUnderCursorEquals(' ')
       normal! x
     else
       normal! l
@@ -116,7 +123,7 @@ endfunction
 
 function! s:goToNearestBlockBounds()
   let char = s:CharUnderCursor()
-  if char ==# '{' || char ==# '}'
+  if s:CharUnderCursorEquals('{') || s:CharUnderCursorEquals('}')
     return char
   endif
   let word = s:WordUnderCursor()
