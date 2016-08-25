@@ -162,22 +162,8 @@ function s:WordStrictlyUnderCursorEquals(word)
 endfunction
 
 function! s:goToNearestBlockBounds()
-  " Positions the cursor on the opening block character or word, namely *do or
-  " *{.
-  if s:CharUnderCursorEquals('}')
-    call s:GoToOpeningOrClosingTag()
-  elseif s:WordStrictlyUnderCursorEquals('do')
-    if s:WordUnderCursorEquals('o')
-      " Go to the d.
-      normal! h
-    endif
-  elseif s:WordStrictlyUnderCursorEquals('end')
-    call s:GoToOpeningOrClosingTag()
-  endif
-  if !searchpair('{', '', '}', 'bcW')
-    call searchpair('\<do\>', '', '\<end\>\zs', 'bcW',
-          \ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string"')
-  endif
+  " Positions the cursor on the nearest *do or *{.
+  call search('\<do\>\|{', 'bcW')
 endfunction
 
 function! s:ToggleDoEndOrBrackets()
