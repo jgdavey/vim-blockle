@@ -19,18 +19,18 @@ set cpo&vim
 function! s:ConvertBracketsToDoEnd()
   let char = getline('.')[col('.')-1]
   if char=='}'
-    normal %
+    normal! %
   endif
-  normal h
+  normal! h
   " Bracket touching previous word
   if getline('.')[col('.')-1] =~ '[^ ;]'
     exe "normal! a "
   endif
-  normal l
+  normal! l
   let begin_pos = getpos('.')
   let begin_num = line('.')
   let begin_line = getline('.')
-  normal %
+  normal! %
   let end_pos = getpos('.')
   let end_num = line('.')
 
@@ -75,23 +75,23 @@ function! s:ConvertDoEndToBrackets()
   let char = getline('.')[col('.')-1]
   let w = expand('<cword>')
   if w=='end'
-    normal %
+    normal! %
   elseif char == 'o'
     normal! h
   endif
   let do_pos = getpos('.')
   let begin_num = line('.')
-  normal %
+  normal! %
   let try_again = 10
   while try_again && expand('<cword>') !=# 'end'
     let try_again = try_again - 1
-    normal %
+    normal! %
   endwhile
   let lines = (line('.')-begin_num+1)
 
-  normal ciw}
+  normal! ciw}
   call setpos('.', do_pos)
-  normal de
+  normal! de
 
   let line = getline(begin_num)
   let before_do_str = strpart(line, 0, do_pos[2] - 1)
