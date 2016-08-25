@@ -36,6 +36,10 @@ function! s:CharUnderCursorMatches(pattern)
   return s:CharUnderCursor() =~# a:pattern
 endfunction
 
+function! s:SetCursorPosition(position)
+  call setpos('.', a:position)
+endfunction
+
 function! s:ConvertBracketsToDoEnd()
   normal! h
   " Bracket touching previous word
@@ -43,46 +47,46 @@ function! s:ConvertBracketsToDoEnd()
     exe 'normal! a '
   endif
   normal! l
-  let begin_pos = getpos('.')
-  let begin_num = line('.')
+  let start_position = getpos('.')
+  let start_line = line('.')
   normal! %
-  let end_pos = getpos('.')
-  let end_num = line('.')
+  let end_position = getpos('.')
+  let end_line = line('.')
 
-  call setpos('.', begin_pos)
+  call s:SetCursorPosition(start_position)
   normal! sdo
-  call setpos('.', end_pos)
+  call s:SetCursorPosition(end_position)
 
-  if begin_num == end_num " Was a one-liner
+  if start_line == end_line " Was a one-liner
     if s:CharUnderCursorEquals(' ')
       normal! x
     else
       normal! l
-      let end_pos = getpos('.')
+      let end_position = getpos('.')
     endif
     set paste
     normal! send
     set nopaste
-    call setpos('.', begin_pos)
+    call s:SetCursorPosition(start_position)
 
     " Has block parameters
-    if search('\vdo *\|', 'c', begin_num)
+    if search('\vdo *\|', 'c', start_line)
       let end_of_line = '2f|'
     else
       let end_of_line = 'e'
     endif
-    call setpos('.', end_pos)
+    call s:SetCursorPosition(end_position)
     exe "normal! i\<cr>"
-    call setpos('.', begin_pos)
+    call s:SetCursorPosition(start_position)
     exe 'normal! '.end_of_line."a\<cr>"
-    call setpos('.', begin_pos)
-    if search('do|', 'c', begin_num)
+    call s:SetCursorPosition(start_position)
+    if search('do|', 'c', start_line)
       :.s/do|/do |/
-      call setpos('.', begin_pos)
+      call s:SetCursorPosition(start_position)
     endif
   else
     normal! send
-    call setpos('.', begin_pos)
+    call s:SetCursorPosition(start_position)
   endif
 endfunction
 
@@ -103,7 +107,7 @@ function! s:ConvertDoEndToBrackets()
   let lines = (line('.')-begin_num+1)
 
   normal! ciw}
-  call setpos('.', do_pos)
+  call s:SetCursorPosition(do_pos)
   normal! de
 
   let line = getline(begin_num)
@@ -116,18 +120,18 @@ function! s:ConvertDoEndToBrackets()
     normal! JJ
     " Remove extraneous spaces
     " if search('  \+', 'c', begin_num) | :.s/\([^ ]\)  \+/\1 /g | endif
-    call setpos('.', do_pos)
+    call s:SetCursorPosition(do_pos)
   endif
 endfunction
 
 function! s:goToNearestBlockBounds()
   if s:CharUnderCursorEquals('}')
     normal! %
-    return ''
+    return
   elseif s:WordUnderCursorEquals('do') || s:WordUnderCursorEquals('end') && s:CharUnderCursor() !=# ' '
     return s:WordUnderCursor()
   elseif searchpair('{', '', '}', 'bcW')
-    return ''
+    return
   elseif searchpair('\<do\>', '', '\<end\>\zs', 'bcW',
         \ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string"')
     return s:WordUnderCursor()
