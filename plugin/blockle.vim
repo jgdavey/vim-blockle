@@ -8,7 +8,7 @@
 " Exit quickly when:
 " - this plugin was already loaded (or disabled)
 " - when 'compatible' is set
-if (exists("g:loaded_blockle") && g:loaded_blockle) || &cp
+if (exists('g:loaded_blockle') && g:loaded_blockle) || &cp
   finish
 endif
 let g:loaded_blockle = 1
@@ -24,7 +24,7 @@ function! s:ConvertBracketsToDoEnd()
   normal! h
   " Bracket touching previous word
   if getline('.')[col('.')-1] =~ '[^ ;]'
-    exe "normal! a "
+    exe 'normal! a '
   endif
   normal! l
   let begin_pos = getpos('.')
@@ -59,7 +59,7 @@ function! s:ConvertBracketsToDoEnd()
     call setpos('.', end_pos)
     exe "normal! i\<cr>"
     call setpos('.', begin_pos)
-    exe "normal! ".end_of_line."a\<cr>"
+    exe 'normal! '.end_of_line."a\<cr>"
     call setpos('.', begin_pos)
     if search('do|', 'c', begin_num)
       :.s/do|/do |/
@@ -97,7 +97,7 @@ function! s:ConvertDoEndToBrackets()
   let before_do_str = strpart(line, 0, do_pos[2] - 1)
   let after_do_str  = strpart(line, do_pos[2] - 1)
 
-  call setline(begin_num, before_do_str . "{" . after_do_str)
+  call setline(begin_num, before_do_str . '{' . after_do_str)
 
   if lines == 3
     normal! JJ
@@ -152,7 +152,7 @@ endfunction
 
 nnoremap <silent> <Plug>BlockToggle :<C-U>call <SID>ToggleDoEndOrBrackets()<CR>
 
-if !exists("g:blockle_mapping")
+if !exists('g:blockle_mapping')
   let g:blockle_mapping = '<Leader>b'
 endif
 
