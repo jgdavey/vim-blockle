@@ -161,9 +161,19 @@ function s:WordStrictlyUnderCursorEquals(word)
   return s:WordUnderCursorEquals(a:word) && s:CharUnderCursor() !=# ' '
 endfunction
 
-function! s:goToNearestBlockBounds()
+function! s:OpeningBracketIsCloserThanDo()
+  let [do_line, do_col] = searchpos('\<do\>', 'bcWn')
+  let [bracket_line, bracket_col] = searchpos('{', 'bcWn')
+  return bracket_line > do_line || (bracket_line == do_line && bracket_col > do_col)
+endfunction
+
+function! s:GoToNearestBlockOpeningTag()
   " Positions the cursor on the nearest *do or *{.
-  call search('\<do\>\|{', 'bcW')
+  if s:OpeningBracketIsCloserThanDo()
+    call searchpos('{', 'bcW')
+  else
+    call searchpos('\<do\>', 'bcW')
+  endif
 endfunction
 
 function! s:ToggleDoEndOrBrackets()
@@ -174,7 +184,7 @@ function! s:ToggleDoEndOrBrackets()
   set clipboard-=unnamed
   let paste_mode = &paste
   
-  call s:goToNearestBlockBounds()
+  call s:GoToNearestBlockOpeningTag()
   if s:CharUnderCursorEquals('{')
     call s:ConvertBracketsToDoEnd()
   elseif s:WordUnderCursorEquals('do')
