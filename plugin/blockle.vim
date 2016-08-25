@@ -40,12 +40,52 @@ function! s:CharBeforeCursorMatches(pattern)
   return s:CharBeforeCursor() =~# a:pattern
 endfunction
 
+function! s:ReplaceOpeningBracketWithDo()
+  " The cursor has to be on the opening bracket.
+  normal! sdo
+endfunction
+
+function! s:ReplaceClosingBracketWithEnd()
+  " The cursor has to be on the closing bracket.
+  normal! send
+endfunction
+
 function! s:SetCursorPosition(position)
   call setpos('.', a:position)
 endfunction
 
 function! s:InsertCharBeforeCursor(char)
   exe 'normal! i'.a:char."\<esc>l"
+endfunction
+
+function! s:ConvertOneLinerBracketsToDoEnd(start_position, end_position, start_line)
+  let end_position = a:end_position
+  if s:CharUnderCursorEquals(' ')
+    normal! x
+  else
+    normal! l
+    let end_position = getpos('.')
+  endif
+  set paste
+  normal! send
+  set nopaste
+  call s:SetCursorPosition(a:start_position)
+
+  " Has block parameters
+  if search('\vdo *\|', 'c', a:start_line)
+    let end_of_line = '2f|'
+  else
+    let end_of_line = 'e'
+  endif
+  call s:SetCursorPosition(end_position)
+  exe "normal! i\<cr>"
+  call s:SetCursorPosition(a:start_position)
+  exe 'normal! '.end_of_line."a\<cr>"
+  call s:SetCursorPosition(a:start_position)
+  if search('do|', 'c', a:start_line)
+    :.s/do|/do |/
+    call s:SetCursorPosition(a:start_position)
+  endif
 endfunction
 
 function! s:ConvertBracketsToDoEnd()
@@ -63,40 +103,13 @@ function! s:ConvertBracketsToDoEnd()
   let end_line = line('.')
 
   call s:SetCursorPosition(start_position)
-  " Replace '{' with do.
-  normal! sdo
+  call s:ReplaceOpeningBracketWithDo()
   call s:SetCursorPosition(end_position)
 
   if start_line == end_line " Was a one-liner
-    if s:CharUnderCursorEquals(' ')
-      normal! x
-    else
-      normal! l
-      let end_position = getpos('.')
-    endif
-    set paste
-    normal! send
-    set nopaste
-    call s:SetCursorPosition(start_position)
-
-    " Has block parameters
-    if search('\vdo *\|', 'c', start_line)
-      let end_of_line = '2f|'
-    else
-      let end_of_line = 'e'
-    endif
-    call s:SetCursorPosition(end_position)
-    exe "normal! i\<cr>"
-    call s:SetCursorPosition(start_position)
-    exe 'normal! '.end_of_line."a\<cr>"
-    call s:SetCursorPosition(start_position)
-    if search('do|', 'c', start_line)
-      :.s/do|/do |/
-      call s:SetCursorPosition(start_position)
-    endif
+    call s:ConvertOneLinerBracketsToDoEnd(start_position, end_position, start_line)
   else
-    " Replace '}' with 'end'.
-    normal! send
+    call s:ReplaceClosingBracketWithEnd()
     call s:SetCursorPosition(start_position)
   endif
 endfunction
