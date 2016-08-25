@@ -29,7 +29,6 @@ function! s:ConvertBracketsToDoEnd()
   normal! l
   let begin_pos = getpos('.')
   let begin_num = line('.')
-  let begin_line = getline('.')
   normal! %
   let end_pos = getpos('.')
   let end_num = line('.')
