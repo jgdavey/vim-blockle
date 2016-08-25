@@ -37,9 +37,6 @@ function! s:CharUnderCursorMatches(pattern)
 endfunction
 
 function! s:ConvertBracketsToDoEnd()
-  if s:CharUnderCursorEquals('}')
-    normal! %
-  endif
   normal! h
   " Bracket touching previous word
   if s:CharUnderCursorMatches('[^ ;]')
@@ -124,14 +121,15 @@ function! s:ConvertDoEndToBrackets()
 endfunction
 
 function! s:goToNearestBlockBounds()
-  if s:CharUnderCursorEquals('{') || s:CharUnderCursorEquals('}')
-    return s:CharUnderCursor()
+  if s:CharUnderCursorEquals('}')
+    normal! %
+    return ''
   elseif s:WordUnderCursorEquals('do') || s:WordUnderCursorEquals('end') && s:CharUnderCursor() !=# ' '
     return s:WordUnderCursor()
-  elseif searchpair('{', '', '}', 'bcW') > 0
-    return s:CharUnderCursor()
+  elseif searchpair('{', '', '}', 'bcW')
+    return ''
   elseif searchpair('\<do\>', '', '\<end\>\zs', 'bcW',
-        \ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string"') > 0
+        \ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string"')
     return s:WordUnderCursor()
   else
     return ''
@@ -147,7 +145,8 @@ function! s:ToggleDoEndOrBrackets()
   let paste_mode = &paste
 
   let block_bound = s:goToNearestBlockBounds()
-  if block_bound ==# '{' || block_bound ==# '}'
+  echo 'block_bound = "'.block_bound.'"'
+  if s:CharUnderCursorEquals('{')
     call s:ConvertBracketsToDoEnd()
   elseif block_bound ==# 'do' || block_bound ==# 'end'
     call s:ConvertDoEndToBrackets()
