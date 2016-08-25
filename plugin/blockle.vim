@@ -20,6 +20,10 @@ function! s:CharUnderCursor()
   return getline('.')[col('.') - 1]
 endfunction
 
+function! s:WordUnderCursor()
+  return expand('<cword>')
+endfunction
+
 function! s:ConvertBracketsToDoEnd()
   let char = s:CharUnderCursor()
   if char ==# '}'
@@ -76,7 +80,7 @@ endfunction
 
 function! s:ConvertDoEndToBrackets()
   let char = s:CharUnderCursor()
-  let w = expand('<cword>')
+  let w = s:WordUnderCursor()
   if w ==# 'end'
     normal! %
   elseif char ==# 'o'
@@ -86,7 +90,7 @@ function! s:ConvertDoEndToBrackets()
   let begin_num = line('.')
   normal! %
   let try_again = 10
-  while try_again && expand('<cword>') !=# 'end'
+  while try_again && s:WordUnderCursor() !=# 'end'
     let try_again = try_again - 1
     normal! %
   endwhile
@@ -115,14 +119,14 @@ function! s:goToNearestBlockBounds()
   if char ==# '{' || char ==# '}'
     return char
   endif
-  let word = expand('<cword>')
+  let word = s:WordUnderCursor()
   if (word ==# 'do' || word ==# 'end') && char !=# ' '
     return word
   elseif searchpair('{', '', '}', 'bcW') > 0
     return s:CharUnderCursor()
   elseif searchpair('\<do\>', '', '\<end\>\zs', 'bcW',
         \ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string"') > 0
-    return expand('<cword>')
+    return s:WordUnderCursor()
   endif
 
   return ''
