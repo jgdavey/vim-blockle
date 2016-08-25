@@ -24,6 +24,10 @@ function! s:WordUnderCursor()
   return expand('<cword>')
 endfunction
 
+function! s:WordUnderCursorEquals(word)
+  return s:WordUnderCursor() ==# a:word
+endfunction
+
 function! s:CharUnderCursorEquals(char)
   return s:CharUnderCursor() ==# a:char
 endfunction
@@ -86,11 +90,9 @@ function! s:ConvertBracketsToDoEnd()
 endfunction
 
 function! s:ConvertDoEndToBrackets()
-  let char = s:CharUnderCursor()
-  let w = s:WordUnderCursor()
-  if w ==# 'end'
+  if s:WordUnderCursorEquals('end')
     normal! %
-  elseif char ==# 'o'
+  elseif s:CharUnderCursorEquals('o')
     normal! h
   endif
   let do_pos = getpos('.')
@@ -122,13 +124,11 @@ function! s:ConvertDoEndToBrackets()
 endfunction
 
 function! s:goToNearestBlockBounds()
-  let char = s:CharUnderCursor()
   if s:CharUnderCursorEquals('{') || s:CharUnderCursorEquals('}')
-    return char
+    return s:CharUnderCursor()
   endif
-  let word = s:WordUnderCursor()
-  if (word ==# 'do' || word ==# 'end') && char !=# ' '
-    return word
+  if s:WordUnderCursorEquals('do') || s:WordUnderCursorEquals('end') && s:CharUnderCursor() !=# ' '
+    return s:WordUnderCursor()
   elseif searchpair('{', '', '}', 'bcW') > 0
     return s:CharUnderCursor()
   elseif searchpair('\<do\>', '', '\<end\>\zs', 'bcW',
