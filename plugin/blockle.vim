@@ -18,12 +18,12 @@ set cpo&vim
 
 function! s:ConvertBracketsToDoEnd()
   let char = getline('.')[col('.')-1]
-  if char=='}'
+  if char ==# '}'
     normal! %
   endif
   normal! h
   " Bracket touching previous word
-  if getline('.')[col('.')-1] =~ '[^ ;]'
+  if getline('.')[col('.')-1] =~# '[^ ;]'
     exe 'normal! a '
   endif
   normal! l
@@ -39,7 +39,7 @@ function! s:ConvertBracketsToDoEnd()
   call setpos('.', end_pos)
 
   if begin_num == end_num " Was a one-liner
-    if getline('.')[col('.')-1] == ' '
+    if getline('.')[col('.')-1] ==# ' '
       normal! x
     else
       normal! l
@@ -74,9 +74,9 @@ endfunction
 function! s:ConvertDoEndToBrackets()
   let char = getline('.')[col('.')-1]
   let w = expand('<cword>')
-  if w=='end'
+  if w ==# 'end'
     normal! %
-  elseif char == 'o'
+  elseif char ==# 'o'
     normal! h
   endif
   let do_pos = getpos('.')
@@ -109,11 +109,11 @@ endfunction
 
 function! s:goToNearestBlockBounds()
   let char = getline('.')[col('.')-1]
-  if char == '{' || char == '}'
+  if char ==# '{' || char ==# '}'
     return char
   endif
   let word = expand('<cword>')
-  if (word == 'do' || word == 'end') && char != ' '
+  if (word ==# 'do' || word ==# 'end') && char !=# ' '
     return word
   elseif searchpair('{', '', '}', 'bcW') > 0
     return getline('.')[col('.')-1]
@@ -134,7 +134,7 @@ function! s:ToggleDoEndOrBrackets()
   let paste_mode = &paste
 
   let block_bound = s:goToNearestBlockBounds()
-  if block_bound =='{' || block_bound == '}'
+  if block_bound ==# '{' || block_bound ==# '}'
     call s:ConvertBracketsToDoEnd()
   elseif block_bound ==# 'do' || block_bound ==# 'end'
     call s:ConvertDoEndToBrackets()
