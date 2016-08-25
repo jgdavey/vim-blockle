@@ -58,6 +58,12 @@ function! s:InsertCharBeforeCursor(char)
   exe 'normal! i'.a:char."\<esc>l"
 endfunction
 
+function! s:InsertSpaceIfBracketsTouchesPreviousWord()
+  if s:CharBeforeCursorMatches('[^ ;]')
+    call s:InsertCharBeforeCursor(' ')
+  endif
+endfunction
+
 function! s:ConvertOneLinerBracketsToDoEnd(start_position, end_position, start_line)
   let end_position = a:end_position
   if s:CharUnderCursorEquals(' ')
@@ -91,10 +97,7 @@ endfunction
 function! s:ConvertBracketsToDoEnd()
   " Cursor should be on the opening bracket.
 
-  " Bracket touching previous word.
-  if s:CharBeforeCursorMatches('[^ ;]')
-    call s:InsertCharBeforeCursor(' ')
-  endif
+  call s:InsertSpaceIfBracketsTouchesPreviousWord()
 
   let start_position = getpos('.')
   let start_line = line('.')
@@ -120,31 +123,31 @@ function! s:ConvertDoEndToBrackets()
   elseif s:CharUnderCursorEquals('o')
     normal! h
   endif
-  let do_pos = getpos('.')
-  let begin_num = line('.')
+  let do_position = getpos('.')
+  let do_line = line('.')
   normal! %
   let try_again = 10
   while try_again && s:WordUnderCursor() !=# 'end'
     let try_again = try_again - 1
     normal! %
   endwhile
-  let lines = (line('.')-begin_num+1)
+  let lines = (line('.')-do_line+1)
 
   normal! ciw}
-  call s:SetCursorPosition(do_pos)
+  call s:SetCursorPosition(do_position)
   normal! de
 
-  let line = getline(begin_num)
-  let before_do_str = strpart(line, 0, do_pos[2] - 1)
-  let after_do_str  = strpart(line, do_pos[2] - 1)
+  let line = getline(do_line)
+  let before_do_str = strpart(line, 0, do_position[2] - 1)
+  let after_do_str  = strpart(line, do_position[2] - 1)
 
-  call setline(begin_num, before_do_str . '{' . after_do_str)
+  call setline(do_line, before_do_str . '{' . after_do_str)
 
   if lines == 3
     normal! JJ
     " Remove extraneous spaces
-    " if search('  \+', 'c', begin_num) | :.s/\([^ ]\)  \+/\1 /g | endif
-    call s:SetCursorPosition(do_pos)
+    " if search('  \+', 'c', do_line) | :.s/\([^ ]\)  \+/\1 /g | endif
+    call s:SetCursorPosition(do_position)
   endif
 endfunction
 
