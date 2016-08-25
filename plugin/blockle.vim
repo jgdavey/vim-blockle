@@ -118,11 +118,7 @@ function! s:ConvertBracketsToDoEnd()
 endfunction
 
 function! s:ConvertDoEndToBrackets()
-  if s:WordUnderCursorEquals('end')
-    normal! %
-  elseif s:CharUnderCursorEquals('o')
-    normal! h
-  endif
+  " The cursor is positioned on the "d" of the "do" word.
   let do_position = getpos('.')
   let do_line = line('.')
   normal! %
@@ -151,17 +147,31 @@ function! s:ConvertDoEndToBrackets()
   endif
 endfunction
 
+function s:WordStrictlyUnderCursorEquals(word)
+  " Return if the word strictly under the cursor is equal to word.
+  " If the cursor is positioned in a blank preceding the cursor word, then
+  " this returns false.
+  return s:WordUnderCursorEquals(a:word) && s:CharUnderCursor() !=# ' '
+endfunction
+
 function! s:goToNearestBlockBounds()
   if s:CharUnderCursorEquals('}')
     normal! %
     return
-  elseif s:WordUnderCursorEquals('do') || s:WordUnderCursorEquals('end') && s:CharUnderCursor() !=# ' '
-    return s:WordUnderCursor()
+  elseif s:WordStrictlyUnderCursorEquals('do')
+    if s:WordUnderCursorEquals('o')
+      normal! h
+    endif
+    return
+  elseif s:WordStrictlyUnderCursorEquals('end')
+    " Go to the do block.
+    normal! %
+    return
   elseif searchpair('{', '', '}', 'bcW')
     return
   elseif searchpair('\<do\>', '', '\<end\>\zs', 'bcW',
         \ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string"')
-    return s:WordUnderCursor()
+    return
   else
     return ''
   endif
@@ -174,12 +184,11 @@ function! s:ToggleDoEndOrBrackets()
   let cb_save = &clipboard
   set clipboard-=unnamed
   let paste_mode = &paste
-
-  let block_bound = s:goToNearestBlockBounds()
-  echo 'block_bound = "'.block_bound.'"'
+  
+  echo 'block_bound = "'.s:goToNearestBlockBounds().'"'
   if s:CharUnderCursorEquals('{')
     call s:ConvertBracketsToDoEnd()
-  elseif block_bound ==# 'do' || block_bound ==# 'end'
+  elseif s:WordUnderCursorEquals('do')
     call s:ConvertDoEndToBrackets()
   else
     echo 'Cannot toggle block: cursor is not on {, }, do or end'
