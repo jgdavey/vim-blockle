@@ -20,6 +20,10 @@ function! s:CharUnderCursor()
   return getline('.')[col('.') - 1]
 endfunction
 
+function! s:CharBeforeCursor()
+  return getline('.')[col('.') - 2]
+endfunction
+
 function! s:WordUnderCursor()
   return expand('<cword>')
 endfunction
@@ -32,21 +36,26 @@ function! s:CharUnderCursorEquals(char)
   return s:CharUnderCursor() ==# a:char
 endfunction
 
-function! s:CharUnderCursorMatches(pattern)
-  return s:CharUnderCursor() =~# a:pattern
+function! s:CharBeforeCursorMatches(pattern)
+  return s:CharBeforeCursor() =~# a:pattern
 endfunction
 
 function! s:SetCursorPosition(position)
   call setpos('.', a:position)
 endfunction
 
+function! s:InsertCharBeforeCursor(char)
+  exe 'normal! i'.a:char."\<esc>l"
+endfunction
+
 function! s:ConvertBracketsToDoEnd()
-  normal! h
-  " Bracket touching previous word
-  if s:CharUnderCursorMatches('[^ ;]')
-    exe 'normal! a '
+  " Cursor should be on the opening bracket.
+
+  " Bracket touching previous word.
+  if s:CharBeforeCursorMatches('[^ ;]')
+    call s:InsertCharBeforeCursor(' ')
   endif
-  normal! l
+
   let start_position = getpos('.')
   let start_line = line('.')
   normal! %
@@ -54,6 +63,7 @@ function! s:ConvertBracketsToDoEnd()
   let end_line = line('.')
 
   call s:SetCursorPosition(start_position)
+  " Replace '{' with do.
   normal! sdo
   call s:SetCursorPosition(end_position)
 
@@ -85,6 +95,7 @@ function! s:ConvertBracketsToDoEnd()
       call s:SetCursorPosition(start_position)
     endif
   else
+    " Replace '}' with 'end'.
     normal! send
     call s:SetCursorPosition(start_position)
   endif
