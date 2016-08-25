@@ -19,34 +19,34 @@ set cpo&vim
 function! s:ConvertBracketsToDoEnd()
   let char = getline('.')[col('.')-1]
   if char=='}'
-    norm %
+    normal %
   endif
-  norm h
+  normal h
   " Bracket touching previous word
   if getline('.')[col('.')-1] =~ '[^ ;]'
-    exe "norm! a "
+    exe "normal! a "
   endif
-  norm l
+  normal l
   let begin_pos = getpos('.')
   let begin_num = line('.')
   let begin_line = getline('.')
-  norm %
+  normal %
   let end_pos = getpos('.')
   let end_num = line('.')
 
   call setpos('.', begin_pos)
-  norm! sdo
+  normal! sdo
   call setpos('.', end_pos)
 
   if begin_num == end_num " Was a one-liner
     if getline('.')[col('.')-1] == ' '
-      norm! x
+      normal! x
     else
-      norm! l
+      normal! l
       let end_pos = getpos('.')
     endif
     set paste
-    norm! send
+    normal! send
     set nopaste
     call setpos('.', begin_pos)
 
@@ -57,16 +57,16 @@ function! s:ConvertBracketsToDoEnd()
       let end_of_line = 'e'
     endif
     call setpos('.', end_pos)
-    exe "norm! i\<cr>"
+    exe "normal! i\<cr>"
     call setpos('.', begin_pos)
-    exe "norm! ".end_of_line."a\<cr>"
+    exe "normal! ".end_of_line."a\<cr>"
     call setpos('.', begin_pos)
     if search('do|', 'c', begin_num)
       :.s/do|/do |/
       call setpos('.', begin_pos)
     endif
   else
-    norm! send
+    normal! send
     call setpos('.', begin_pos)
   endif
 endfunction
@@ -75,23 +75,23 @@ function! s:ConvertDoEndToBrackets()
   let char = getline('.')[col('.')-1]
   let w = expand('<cword>')
   if w=='end'
-    norm %
+    normal %
   elseif char == 'o'
-    norm! h
+    normal! h
   endif
   let do_pos = getpos('.')
   let begin_num = line('.')
-  norm %
+  normal %
   let try_again = 10
   while try_again && expand('<cword>') !=# 'end'
     let try_again = try_again - 1
-    norm %
+    normal %
   endwhile
   let lines = (line('.')-begin_num+1)
 
-  norm ciw}
+  normal ciw}
   call setpos('.', do_pos)
-  norm de
+  normal de
 
   let line = getline(begin_num)
   let before_do_str = strpart(line, 0, do_pos[2] - 1)
@@ -100,7 +100,7 @@ function! s:ConvertDoEndToBrackets()
   call setline(begin_num, before_do_str . "{" . after_do_str)
 
   if lines == 3
-    norm! JJ
+    normal! JJ
     " Remove extraneous spaces
     " if search('  \+', 'c', begin_num) | :.s/\([^ ]\)  \+/\1 /g | endif
     call setpos('.', do_pos)
