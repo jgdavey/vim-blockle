@@ -126,17 +126,16 @@ endfunction
 function! s:goToNearestBlockBounds()
   if s:CharUnderCursorEquals('{') || s:CharUnderCursorEquals('}')
     return s:CharUnderCursor()
-  endif
-  if s:WordUnderCursorEquals('do') || s:WordUnderCursorEquals('end') && s:CharUnderCursor() !=# ' '
+  elseif s:WordUnderCursorEquals('do') || s:WordUnderCursorEquals('end') && s:CharUnderCursor() !=# ' '
     return s:WordUnderCursor()
   elseif searchpair('{', '', '}', 'bcW') > 0
     return s:CharUnderCursor()
   elseif searchpair('\<do\>', '', '\<end\>\zs', 'bcW',
         \ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string"') > 0
     return s:WordUnderCursor()
+  else
+    return ''
   endif
-
-  return ''
 endfunction
 
 function! s:ToggleDoEndOrBrackets()
