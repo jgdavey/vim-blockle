@@ -123,11 +123,6 @@ function! s:ConvertDoEndToBrackets()
   let do_position = getpos('.')
   let do_line = line('.')
   normal! %
-  let try_again = 10
-  while try_again && s:WordUnderCursor() !=# 'end'
-    let try_again = try_again - 1
-    normal! %
-  endwhile
   let lines = (line('.')-do_line+1)
 
   normal! ciw}
