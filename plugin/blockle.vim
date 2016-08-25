@@ -119,6 +119,7 @@ endfunction
 
 function! s:ConvertDoEndToBrackets()
   " The cursor is positioned on the "d" of the "do" word.
+
   let do_position = getpos('.')
   let do_line = line('.')
   normal! %
@@ -155,25 +156,22 @@ function s:WordStrictlyUnderCursorEquals(word)
 endfunction
 
 function! s:goToNearestBlockBounds()
+  " Positions the cursor on the opening block character or word, namely *do or
+  " *{.
   if s:CharUnderCursorEquals('}')
     normal! %
-    return
   elseif s:WordStrictlyUnderCursorEquals('do')
     if s:WordUnderCursorEquals('o')
+      " Go to the d.
       normal! h
     endif
-    return
   elseif s:WordStrictlyUnderCursorEquals('end')
     " Go to the do block.
     normal! %
-    return
-  elseif searchpair('{', '', '}', 'bcW')
-    return
-  elseif searchpair('\<do\>', '', '\<end\>\zs', 'bcW',
-        \ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string"')
-    return
-  else
-    return ''
+  endif
+  if !searchpair('{', '', '}', 'bcW')
+    call searchpair('\<do\>', '', '\<end\>\zs', 'bcW',
+          \ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string"')
   endif
 endfunction
 
