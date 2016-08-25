@@ -54,6 +54,11 @@ function! s:SetCursorPosition(position)
   call setpos('.', a:position)
 endfunction
 
+function! s:GoToOpeningOrClosingTag()
+  " normal! cannot be used, because else matchit would not be working.
+  normal %
+endfunction
+
 function! s:InsertCharBeforeCursor(char)
   exe 'normal! i'.a:char."\<esc>l"
 endfunction
@@ -101,7 +106,7 @@ function! s:ConvertBracketsToDoEnd()
 
   let start_position = getpos('.')
   let start_line = line('.')
-  normal! %
+  call s:GoToOpeningOrClosingTag()
   let end_position = getpos('.')
   let end_line = line('.')
 
@@ -117,15 +122,21 @@ function! s:ConvertBracketsToDoEnd()
   endif
 endfunction
 
+function! s:ReplaceEndWithClosingBracket()
+  " The cursor should be on the "end".
+  normal! ciw}
+endfunction
+
 function! s:ConvertDoEndToBrackets()
   " The cursor is positioned on the "d" of the "do" word.
 
   let do_position = getpos('.')
   let do_line = line('.')
-  normal! %
-  let lines = (line('.')-do_line+1)
+  call s:GoToOpeningOrClosingTag()
+  let end_line = line('.')
+  let number_lines = end_line - do_line + 1
 
-  normal! ciw}
+  call s:ReplaceEndWithClosingBracket()
   call s:SetCursorPosition(do_position)
   normal! de
 
@@ -135,7 +146,7 @@ function! s:ConvertDoEndToBrackets()
 
   call setline(do_line, before_do_str . '{' . after_do_str)
 
-  if lines == 3
+  if number_lines == 3
     normal! JJ
     " Remove extraneous spaces
     " if search('  \+', 'c', do_line) | :.s/\([^ ]\)  \+/\1 /g | endif
@@ -154,15 +165,14 @@ function! s:goToNearestBlockBounds()
   " Positions the cursor on the opening block character or word, namely *do or
   " *{.
   if s:CharUnderCursorEquals('}')
-    normal! %
+    call s:GoToOpeningOrClosingTag()
   elseif s:WordStrictlyUnderCursorEquals('do')
     if s:WordUnderCursorEquals('o')
       " Go to the d.
       normal! h
     endif
   elseif s:WordStrictlyUnderCursorEquals('end')
-    " Go to the do block.
-    normal! %
+    call s:GoToOpeningOrClosingTag()
   endif
   if !searchpair('{', '', '}', 'bcW')
     call searchpair('\<do\>', '', '\<end\>\zs', 'bcW',
@@ -178,7 +188,7 @@ function! s:ToggleDoEndOrBrackets()
   set clipboard-=unnamed
   let paste_mode = &paste
   
-  echo 'block_bound = "'.s:goToNearestBlockBounds().'"'
+  call s:goToNearestBlockBounds()
   if s:CharUnderCursorEquals('{')
     call s:ConvertBracketsToDoEnd()
   elseif s:WordUnderCursorEquals('do')
