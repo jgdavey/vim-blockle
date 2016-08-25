@@ -8,7 +8,7 @@
 " Exit quickly when:
 " - this plugin was already loaded (or disabled)
 " - when 'compatible' is set
-if (exists("g:loaded_blockle") && g:loaded_blockle) || &cp
+if (exists('g:loaded_blockle') && g:loaded_blockle) || &cp
   finish
 endif
 let g:loaded_blockle = 1
@@ -18,35 +18,34 @@ set cpo&vim
 
 function! s:ConvertBracketsToDoEnd()
   let char = getline('.')[col('.')-1]
-  if char=='}'
-    norm %
+  if char ==# '}'
+    normal! %
   endif
-  norm h
+  normal! h
   " Bracket touching previous word
-  if getline('.')[col('.')-1] =~ '[^ ;]'
-    exe "norm! a "
+  if getline('.')[col('.')-1] =~# '[^ ;]'
+    exe 'normal! a '
   endif
-  norm l
+  normal! l
   let begin_pos = getpos('.')
   let begin_num = line('.')
-  let begin_line = getline('.')
-  norm %
+  normal! %
   let end_pos = getpos('.')
   let end_num = line('.')
 
   call setpos('.', begin_pos)
-  norm! sdo
+  normal! sdo
   call setpos('.', end_pos)
 
   if begin_num == end_num " Was a one-liner
-    if getline('.')[col('.')-1] == ' '
-      norm! x
+    if getline('.')[col('.')-1] ==# ' '
+      normal! x
     else
-      norm! l
+      normal! l
       let end_pos = getpos('.')
     endif
     set paste
-    norm! send
+    normal! send
     set nopaste
     call setpos('.', begin_pos)
 
@@ -57,16 +56,16 @@ function! s:ConvertBracketsToDoEnd()
       let end_of_line = 'e'
     endif
     call setpos('.', end_pos)
-    exe "norm! i\<cr>"
+    exe "normal! i\<cr>"
     call setpos('.', begin_pos)
-    exe "norm! ".end_of_line."a\<cr>"
+    exe 'normal! '.end_of_line."a\<cr>"
     call setpos('.', begin_pos)
     if search('do|', 'c', begin_num)
       :.s/do|/do |/
       call setpos('.', begin_pos)
     endif
   else
-    norm! send
+    normal! send
     call setpos('.', begin_pos)
   endif
 endfunction
@@ -74,33 +73,33 @@ endfunction
 function! s:ConvertDoEndToBrackets()
   let char = getline('.')[col('.')-1]
   let w = expand('<cword>')
-  if w=='end'
-    norm %
-  elseif char == 'o'
-    norm! h
+  if w ==# 'end'
+    normal! %
+  elseif char ==# 'o'
+    normal! h
   endif
   let do_pos = getpos('.')
   let begin_num = line('.')
-  norm %
+  normal! %
   let try_again = 10
   while try_again && expand('<cword>') !=# 'end'
     let try_again = try_again - 1
-    norm %
+    normal! %
   endwhile
   let lines = (line('.')-begin_num+1)
 
-  norm ciw}
+  normal! ciw}
   call setpos('.', do_pos)
-  norm de
+  normal! de
 
   let line = getline(begin_num)
   let before_do_str = strpart(line, 0, do_pos[2] - 1)
   let after_do_str  = strpart(line, do_pos[2] - 1)
 
-  call setline(begin_num, before_do_str . "{" . after_do_str)
+  call setline(begin_num, before_do_str . '{' . after_do_str)
 
   if lines == 3
-    norm! JJ
+    normal! JJ
     " Remove extraneous spaces
     " if search('  \+', 'c', begin_num) | :.s/\([^ ]\)  \+/\1 /g | endif
     call setpos('.', do_pos)
@@ -109,11 +108,11 @@ endfunction
 
 function! s:goToNearestBlockBounds()
   let char = getline('.')[col('.')-1]
-  if char == '{' || char == '}'
+  if char ==# '{' || char ==# '}'
     return char
   endif
   let word = expand('<cword>')
-  if (word == 'do' || word == 'end') && char != ' '
+  if (word ==# 'do' || word ==# 'end') && char !=# ' '
     return word
   elseif searchpair('{', '', '}', 'bcW') > 0
     return getline('.')[col('.')-1]
@@ -134,7 +133,7 @@ function! s:ToggleDoEndOrBrackets()
   let paste_mode = &paste
 
   let block_bound = s:goToNearestBlockBounds()
-  if block_bound =='{' || block_bound == '}'
+  if block_bound ==# '{' || block_bound ==# '}'
     call s:ConvertBracketsToDoEnd()
   elseif block_bound ==# 'do' || block_bound ==# 'end'
     call s:ConvertDoEndToBrackets()
@@ -152,7 +151,7 @@ endfunction
 
 nnoremap <silent> <Plug>BlockToggle :<C-U>call <SID>ToggleDoEndOrBrackets()<CR>
 
-if !exists("g:blockle_mapping")
+if !exists('g:blockle_mapping')
   let g:blockle_mapping = '<Leader>b'
 endif
 
