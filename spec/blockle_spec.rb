@@ -7,7 +7,7 @@ describe 'Blockle' do
     test_block_toggle <<-END_INITIAL, <<-END_FINAL
       [1, 3].each <{> |elt| puts elt }
     END_INITIAL
-      [1, 3].each d<o> |elt|
+      [1, 3].each <d>o |elt|
         puts elt
       end
     END_FINAL
