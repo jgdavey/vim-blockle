@@ -5,7 +5,7 @@ describe 'Blockle' do
 
   specify 'one-liner brackets to do..end' do
     test_block_toggle <<-END_INITIAL, <<-END_FINAL
-      [1, 3].each <{> |elt| puts elt }
+      [1, 3].each { <|>elt| puts elt }
     END_INITIAL
       [1, 3].each <d>o |elt|
         puts elt
