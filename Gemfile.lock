@@ -59,14 +59,14 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  guard
-  guard-rspec
+  guard (~> 2.14.0)
+  guard-rspec (~> 4.7.0)
   listen (~> 3.0.8)
-  rake
-  rspec-core
-  rspec-expectations
+  rake (~> 11.2.0)
+  rspec-core (~> 3.5.0)
+  rspec-expectations (~> 3.5.0)
   ruby_dep (~> 1.3.0)
-  vimrunner
+  vimrunner (~> 0.3.0)
 
 BUNDLED WITH
    1.12.5
