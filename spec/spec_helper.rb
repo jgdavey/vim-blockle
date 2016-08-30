@@ -30,27 +30,42 @@ Vimrunner::RSpec.configure do |config|
 end
 
 module Helpers
-  def test_block_toggle initial_buffer, final_buffer
-    write_file FILE_NAME, initial_buffer
+  def test_block_toggle initial_buffer, expected_final_buffer
+    ensure_cursor_presence expected_final_buffer
 
+    actual_final_buffer, command_output = toggle_block initial_buffer
+
+    expect(command_output).to be_empty
+    expect(actual_final_buffer).to eq \
+      normalize_string_indent(expected_final_buffer)
+  end
+
+  def ensure_not_working initial_buffer
+    actual_final_buffer, command_output = toggle_block initial_buffer
+
+    expect(command_output).to eq 'Cannot toggle block: cursor is not on {, },'\
+      ' do or end'
+    expect(actual_final_buffer).to eq normalize_string_indent(initial_buffer)
+  end
+
+  private
+
+  def toggle_block initial_buffer
     ensure_cursor_presence initial_buffer
-    ensure_cursor_presence final_buffer
-
+    write_file FILE_NAME, initial_buffer
     vim.edit FILE_NAME
     seek_to_cursor
-    vim.command 'execute "normal \<Plug>BlockToggle"'
+    command_output = vim.command 'execute "normal \<Plug>BlockToggle"'
     mark_cursor_position
     # Necessary because the client-server API is not really robust, making
     # random tests fail. I guess this sleep lets time to the server to process
     # all the commands before writing.
     sleep 0.1
     vim.write
-
-    expect(IO.read(FILE_NAME).chomp).to eq normalize_string_indent(final_buffer)
+    actual_final_buffer = IO.read(FILE_NAME).chomp
+    [actual_final_buffer, command_output]
   end
 
-  private
-  
   def seek_to_cursor
     # Go to the cursor position.
     vim.search '<.>'

@@ -112,4 +112,10 @@ describe 'Blockle' do
       }
     END_FINAL
   end
+
+  specify 'outside of a block' do
+    ensure_not_working <<-EOF
+      [1, 2].ea<c>h { |elt| puts elt }
+    EOF
+  end
 end

@@ -34,8 +34,11 @@ then simply copy and paste:
 Once help tags have been generated, you can view the manual with
 `:help blockle`.
 
+## Requirements
+
 This plugin is only available if 'compatible' is not set, and will only work
 correctly if matchit.vim is available.
+Needs vim 7.4 to work.
 
 ## License
 
