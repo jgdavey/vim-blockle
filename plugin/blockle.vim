@@ -191,20 +191,23 @@ function! s:ToggleDoEndOrBrackets()
   let paste_mode = &paste
   
   call s:GoToNearestBlockOpeningTag()
-  if s:CharUnderCursorEquals('{')
-    call s:ConvertBracketsToDoEnd()
-  elseif s:WordUnderCursorEquals('do')
-    call s:ConvertDoEndToBrackets()
-  else
-    echo 'Cannot toggle block: cursor is not on {, }, do or end'
-  endif
+  try
+    if s:CharUnderCursorEquals('{')
+      call s:ConvertBracketsToDoEnd()
+    elseif s:WordUnderCursorEquals('do')
+      call s:ConvertDoEndToBrackets()
+    else
+      throw 'Cannot toggle block: cursor is not on {, }, do or end'
+    endif
 
   " Restore anonymous register and clipboard settings
-  call setreg('"', reg, regtype)
-  let &clipboard = cb_save
-  let &paste = paste_mode
+  finally
+    call setreg('"', reg, regtype)
+    let &clipboard = cb_save
+    let &paste = paste_mode
 
-  silent! call repeat#set("\<Plug>BlockToggle", -1)
+    silent! call repeat#set("\<Plug>BlockToggle", -1)
+  endtry
 endfunction
 
 nnoremap <silent> <Plug>BlockToggle :<C-U>call <SID>ToggleDoEndOrBrackets()<CR>
