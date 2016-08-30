@@ -1,4 +1,4 @@
-#  vim-blockle
+#  vim-blockle [![Build Status](https://travis-ci.org/Sathors/vim-blockle.svg?branch=master)](https://travis-ci.org/Sathors/vim-blockle)
 
 This plugin allows rapid toggling between the two different styles of ruby
 blocks, namely `do`/`end` and brackets `{}`. To use, simply move the cursor to the
