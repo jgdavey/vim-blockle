@@ -168,6 +168,12 @@ function! s:OpeningBracketIsCloserThanDo()
 endfunction
 
 function! s:GoToNearestBlockOpeningTag()
+  if s:WordUnderCursorEquals('end')
+    call s:GoToOpeningOrClosingTag()
+    if s:WordUnderCursorEquals('do')
+      return
+    endif
+  endif
   " Positions the cursor on the nearest *do or *{.
   if s:OpeningBracketIsCloserThanDo()
     call searchpos('{', 'bcW')

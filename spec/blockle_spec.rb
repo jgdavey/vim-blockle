@@ -72,4 +72,44 @@ describe 'Blockle' do
       end
     END_FINAL
   end
+
+  specify 'with a dictionnary' do
+    test_block_toggle <<-END_INITIAL, <<-END_FINAL
+      1.times.map do |i|
+        {
+          foo: i,
+          bar: 4
+        }
+      <e>nd
+    END_INITIAL
+      1.times.map <{> |i|
+        {
+          foo: i,
+          bar: 4
+        }
+      }
+    END_FINAL
+  end
+
+  specify 'with another dictionnary' do
+    test_block_toggle <<-END_INITIAL, <<-END_FINAL
+      1.times.map do |i|
+        puts 'test'
+        {
+          foo: i,
+          bar: 4
+        }
+        puts 'test'
+      <e>nd
+    END_INITIAL
+      1.times.map <{> |i|
+        puts 'test'
+        {
+          foo: i,
+          bar: 4
+        }
+        puts 'test'
+      }
+    END_FINAL
+  end
 end
